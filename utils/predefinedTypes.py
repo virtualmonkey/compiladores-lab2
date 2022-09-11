@@ -1,0 +1,5 @@
+INT = "Int"
+STRING = "String"
+BOOL = "Bool"
+VOID = "Void"
+OBJECT = "Object"
