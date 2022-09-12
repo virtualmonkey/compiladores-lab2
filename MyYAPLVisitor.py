@@ -1,3 +1,5 @@
+import numpy as np
+
 from YAPLParser import YAPLParser
 from YAPLVisitor import YAPLVisitor
 
@@ -6,6 +8,7 @@ from objects.Class import Class
 from objects.Function import Function
 from objects.Attribute import Attribute
 from objects.Error import Error
+from utils.functions import getTypeBitSize
 
 from tables.SymbolsTable import *
 
@@ -204,15 +207,21 @@ class MyYAPLVisitor(YAPLVisitor):
         for x in range(len(ctx.ID())):
             newVariableIdentifier = str(ctx.ID()[x])
             newVariableType = str(ctx.TYPE()[x])
-            
+
+            newAttribute = Attribute(
+                newVariableIdentifier,
+                newVariableType,
+                self.SCOPE,
+                self.CLASS,
+                self.METHOD_NO,
+                False,
+                getTypeBitSize(newVariableType),
+            )
+
+            newAttribute.displacement = id(newAttribute)
+        
             addition = self.table.AddAttribute(
-                Attribute(
-                    newVariableIdentifier,
-                    newVariableType,
-                    self.SCOPE,
-                    self.CLASS,
-                    self.METHOD_NO
-                )
+                newAttribute
             )
 
             if not addition:

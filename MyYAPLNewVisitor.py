@@ -4,6 +4,7 @@ from YAPLVisitor import YAPLVisitor
 # This class defines a complete generic visitor for a parse tree produced by YAPLParser.
 from objects.Attribute import Attribute
 from objects.Error import Error
+from utils.functions import getTypeBitSize
 
 
 from tables.SymbolsTable import *
@@ -86,8 +87,16 @@ class MyYAPLNewVisitor(YAPLVisitor):
         attributeIdentifier = str(ctx.ID())
         attributeType = str(ctx.TYPE())
 
-        newAttribute = Attribute(attributeIdentifier, attributeType, self.SCOPE, self.CLASS, self.METHOD_NO) if self.METHOD else Attribute(attributeIdentifier, attributeType, self.SCOPE, self.CLASS, None)
+        if (self.METHOD):
+            newAttribute = Attribute(attributeIdentifier, attributeType, self.SCOPE, self.CLASS, self.METHOD_NO)
+        else:
+            newAttribute = Attribute(attributeIdentifier, attributeType, self.SCOPE, self.CLASS, None)
+
+        # newAttribute = Attribute(attributeIdentifier, attributeType, self.SCOPE, self.CLASS, self.METHOD_NO) if self.METHOD else Attribute(attributeIdentifier, attributeType, self.SCOPE, self.CLASS, None)
         
+        newAttribute.size = getTypeBitSize(attributeType)
+        newAttribute.displacement = id(newAttribute)
+
         addition = self.table.AddAttribute(newAttribute)
 
         if not addition:
@@ -108,16 +117,19 @@ class MyYAPLNewVisitor(YAPLVisitor):
         parameterIdentifier = str(ctx.ID())
         parameterType = str(ctx.TYPE())
 
-        result  = self.table.AddAttribute(
-            Attribute(
-                parameterIdentifier,
-                parameterType,
-                self.SCOPE,
-                self.CLASS,
-                self.METHOD_NO,
-                True
-            )
+        newAttribute = Attribute(
+            parameterIdentifier,
+            parameterType,
+            self.SCOPE,
+            self.CLASS,
+            self.METHOD_NO,
+            True
         )
+
+        newAttribute.size = getTypeBitSize(parameterType)
+        newAttribute.displacement = id(newAttribute)
+
+        result  = self.table.AddAttribute(newAttribute)
         
         if not result:
             self.errors.append(
