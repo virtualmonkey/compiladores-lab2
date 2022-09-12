@@ -18,7 +18,7 @@ class Main inherits IO {
 	{
 		out_string("Enter a number to calculate fibonacci\n")
       	fibo <- new Fibonacci;
-      	out_int(fibo.fibonacci(3));
+      	out_int(fibo.fibonacci(in_int()));
       	self;
 	}
     };
